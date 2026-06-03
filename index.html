@@ -31,9 +31,10 @@ body{
     radial-gradient(circle at 90% 110%, rgba(124,31,31,.25), transparent 50%),
     linear-gradient(160deg,#0d2419 0%,#16352440 35%,#1c120a 100%),
     #10241a;
-  min-height:100%;
+  height:100dvh;
+  min-height:100dvh;
   position:relative;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 /* faint phoenician/mosaic lattice */
 body::before{
@@ -43,10 +44,11 @@ body::before{
     repeating-linear-gradient(-45deg, var(--or) 0 2px, transparent 2px 22px);
   background-size:44px 44px;
 }
-.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:10px 16px 10px;
+  height:100dvh;display:flex;flex-direction:column}
 
 /* ---------- Header ---------- */
-header{text-align:center;margin-bottom:14px}
+header{text-align:center;margin-bottom:8px;flex:0 0 auto}
 .titreband{
   display:inline-block;padding:6px 26px;border-radius:4px;
   border-top:2px solid var(--or);border-bottom:2px solid var(--or);
@@ -65,7 +67,7 @@ h1{
 /* ---------- HUD ---------- */
 .hud{
   display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:stretch;
-  margin:18px auto 22px;
+  margin:8px auto 10px;flex:0 0 auto;
 }
 .stat{
   flex:1 1 130px;max-width:200px;min-width:120px;
@@ -76,22 +78,26 @@ h1{
 }
 .stat .lab{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--or);opacity:.9}
 .stat .val{font-family:'Cinzel',serif;font-weight:700;font-size:1.7rem;color:var(--sand);line-height:1.1;margin-top:2px}
+.stat .val.malus{color:#ff9b7a}
 .stat .val.pulse{animation:pop .4s ease}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.28);color:var(--or-light)}100%{transform:scale(1)}}
 
 /* ---------- Board ---------- */
 .board-shell{
-  border:2px solid rgba(202,166,74,.45);border-radius:16px;padding:16px;
+  border:2px solid rgba(202,166,74,.45);border-radius:16px;padding:14px;
   background:
     linear-gradient(180deg,rgba(13,36,25,.5),rgba(28,18,10,.5));
   box-shadow:0 14px 40px var(--shadow),inset 0 0 60px rgba(0,0,0,.35);
+  flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
 }
 .board{
-  display:grid;gap:clamp(7px,1.4vw,14px);
-  grid-template-columns:repeat(var(--cols),1fr);
+  display:grid;gap:10px;
+  grid-template-columns:repeat(var(--cols),var(--card-w,1fr));
+  justify-content:center;align-content:center;
+  width:100%;height:100%;
   perspective:1100px;
 }
-.card{position:relative;aspect-ratio:3/4;cursor:pointer;
+.card{position:relative;width:100%;aspect-ratio:3/4;cursor:pointer;
   transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.2,.2,1),opacity .4s;
   transform:rotateY(180deg);            /* défaut = face cachée (dos visible) */
   animation:deal .5s backwards;
@@ -168,6 +174,7 @@ h1{
 .row span:first-child{color:var(--sand-deep)}
 .row .v{font-family:'Cinzel',serif;color:var(--sand)}
 .row.good .v{color:var(--or-light)}
+.row.malus .v{color:#ff9b7a}
 .row.total{border-top:1px dashed rgba(202,166,74,.45);margin-top:6px;padding-top:9px;font-size:1.3rem}
 .row.total span:first-child{color:var(--or);font-family:'Cinzel',serif;letter-spacing:.05em}
 .row.total .v{color:var(--or-light);font-weight:700}
@@ -189,12 +196,27 @@ h1{
 
 .intro-list{text-align:left;max-width:430px;margin:0 auto 22px;font-size:1.08rem;line-height:1.7;color:var(--sand-deep)}
 .intro-list b{color:var(--or-light)}
-.foot{margin-top:26px;text-align:center;font-size:.92rem;color:var(--sand-deep);opacity:.65;letter-spacing:.04em}
+.foot{margin-top:8px;text-align:center;font-size:.82rem;color:var(--sand-deep);opacity:.6;letter-spacing:.04em;flex:0 0 auto}
 .foot a{color:var(--or)}
 
+/* floating point-loss feedback */
+.floatpts{position:fixed;z-index:40;pointer-events:none;
+  font-family:'Cinzel',serif;font-weight:700;font-size:1.05rem;color:#ff9b7a;
+  text-shadow:0 1px 3px #000;transform:translate(-50%,-50%);
+  animation:floatup .85s ease forwards}
+@keyframes floatup{
+  0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}
+  20%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-180%) scale(1.05)}
+}
+
 @media(max-width:560px){
-  .stat{flex-basis:43%}
-  .hud{gap:8px}
+  .wrap{padding:8px 8px 8px}
+  .stat{flex:1 1 0;min-width:0;max-width:none;padding:6px 5px}
+  .stat .lab{font-size:.52rem;letter-spacing:.08em}
+  .stat .val{font-size:1.2rem}
+  .hud{gap:6px;margin:6px auto 8px}
+  .board-shell{padding:9px}
 }
 </style>
 </head>
@@ -213,7 +235,7 @@ h1{
   <div class="hud">
     <div class="stat"><div class="lab">Niveau</div><div class="val" id="hud-level">1</div></div>
     <div class="stat"><div class="lab">Score total</div><div class="val" id="hud-score">0</div></div>
-    <div class="stat"><div class="lab">Retournements</div><div class="val" id="hud-flips">0</div></div>
+    <div class="stat"><div class="lab">Malus cartes</div><div class="val malus" id="hud-malus">0</div></div>
     <div class="stat"><div class="lab">Paires</div><div class="val" id="hud-pairs">0 / 4</div></div>
   </div>
 
@@ -232,8 +254,8 @@ h1{
     <div class="intro-list">
       <div>◆ <b>Niveau 1</b> : 4 paires (8 cartes).</div>
       <div>◆ Chaque niveau ajoute des paires : <b>4 → 6 → 8 → 10 → 12 → 14</b>.</div>
-      <div>◆ Moins vous retournez de cartes, plus le <b>bonus d’efficacité</b> est élevé.</div>
-      <div>◆ Une <b>mémoire parfaite</b> = score maximal !</div>
+      <div>◆ Attention : chaque carte ouverte coûte <b>−5 points</b> de malus. Ouvrez-en le moins possible !</div>
+      <div>◆ Aucune erreur = <b>bonus mémoire parfaite</b> et score maximal.</div>
     </div>
     <button class="btn" id="startBtn">Commencer</button>
   </div>
@@ -302,6 +324,7 @@ const EMBLEM = `<svg class="emblem" viewBox="0 0 100 120" xmlns="http://www.w3.o
    ============================================================ */
 const PAIRS_BY_LEVEL = lvl => Math.min(4 + (lvl-1)*2, CARDS.length); // 4,6,8,10,12,14 → cap 28
 const MAX_LEVEL = (()=>{let l=1; while(4+(l-1)*2 < CARDS.length) l++; return l;})(); // last level uses full pool
+const FLIP_COST = 5; // points perdus à chaque carte ouverte
 
 let level=1, totalScore=0, flips=0, attempts=0, matched=0, pairsThisLevel=0;
 let first=null, lock=false, deck=[];
@@ -319,18 +342,50 @@ function pulse(el){el.classList.remove('pulse');void el.offsetWidth;el.classList
 function updateHUD(){
   $('hud-level').textContent=level;
   $('hud-score').textContent=totalScore;
-  $('hud-flips').textContent=flips;
+  $('hud-malus').textContent='−'+(flips*FLIP_COST);
   $('hud-pairs').textContent=`${matched} / ${pairsThisLevel}`;
 }
 
-function colsFor(n){ // pleasant grid for 8..28 cards
-  if(n<=8)  return 4;
-  if(n<=12) return 4;
-  if(n<=16) return 4;
-  if(n<=20) return 5;
-  if(n<=24) return 6;
-  return 7;
+// petit "−5" flottant à l'endroit de la carte ouverte
+function floatPenalty(el){
+  const r=el.getBoundingClientRect();
+  const f=document.createElement('div');
+  f.className='floatpts';
+  f.textContent='−'+FLIP_COST;
+  f.style.left=(r.left+r.width/2)+'px';
+  f.style.top=(r.top+r.height*0.32)+'px';
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),900);
 }
+
+/* Ajuste la taille des cartes pour que TOUTE la grille tienne dans
+   l'espace disponible (largeur ET hauteur), sur téléphone comme sur
+   ordinateur — sans jamais avoir à dézoomer ni scroller.
+   On teste chaque nombre de colonnes et on garde celui qui donne la
+   plus grande carte possible (s'adapte au portrait / paysage). */
+function fitBoard(){
+  const total=deck.length; if(!total) return;
+  const shell=board.parentElement;
+  const cs=getComputedStyle(shell);
+  const availW=shell.clientWidth  - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const availH=shell.clientHeight - parseFloat(cs.paddingTop)  - parseFloat(cs.paddingBottom);
+  if(availW<=0||availH<=0) return;
+  const gap=Math.max(6, Math.min(14, availW*0.014));
+  const ratio=3/4; // largeur / hauteur d'une carte
+  let best={w:0,cols:1};
+  for(let cols=1; cols<=total; cols++){
+    const rows=Math.ceil(total/cols);
+    const cw=(availW-(cols-1)*gap)/cols;          // largeur imposée par les colonnes
+    const ch=(availH-(rows-1)*gap)/rows;          // hauteur imposée par les lignes
+    const w=Math.min(cw, ch*ratio);               // carte limitée par la dimension la plus serrée
+    if(w>best.w) best={w,cols};
+  }
+  board.style.gap=gap+'px';
+  board.style.setProperty('--cols',best.cols);
+  board.style.setProperty('--card-w',Math.floor(best.w)+'px');
+}
+window.addEventListener('resize',fitBoard);
+window.addEventListener('orientationchange',()=>setTimeout(fitBoard,150));
 
 function buildLevel(){
   pairsThisLevel = PAIRS_BY_LEVEL(level);
@@ -339,8 +394,6 @@ function buildLevel(){
   const pool = shuffle(CARDS.slice()).slice(0, pairsThisLevel);
   deck = shuffle(pool.flatMap((card,i)=>[{...card,pid:i},{...card,pid:i}]));
 
-  const total = deck.length;
-  board.style.setProperty('--cols', colsFor(total));
   board.innerHTML='';
   deck.forEach((card,idx)=>{
     const el=document.createElement('div');
@@ -358,12 +411,13 @@ function buildLevel(){
     board.appendChild(el);
   });
   updateHUD();
+  requestAnimationFrame(fitBoard); // dimensionne la grille pour qu'elle tienne à l'écran
 }
 
 function onFlip(el){
   if(lock || el.classList.contains('matched') || el===first || el.classList.contains('flipped')) return;
   el.classList.add('flipped');
-  flips++; pulse($('hud-flips')); updateHUD();
+  flips++; floatPenalty(el); pulse($('hud-malus')); updateHUD();
 
   if(!first){ first=el; return; }
 
@@ -390,23 +444,21 @@ function onFlip(el){
 }
 
 /* ----- Scoring -----
-   Perfect memory (0 erreur) → score maximal.
-   base        = paires * 100
-   efficacité  = max(0, paires*60 − retournementsGaspillés*10)
-                 (gaspillés = retournements − minimum 2·paires)
-   bonus parfait = paires*40 si aucune erreur
-   Max niveau (parfait) = paires * 200
+   Plus on ouvre de cartes, plus on perd de points.
+   base          = paires * 100
+   malus         = nombre de cartes ouvertes * FLIP_COST (−5 chacune)
+   bonus parfait = paires * 40 si aucune erreur
+   total niveau  = max(0, base − malus + bonus parfait)
 */
 function scoreLevel(){
   const P=pairsThisLevel;
   const mismatches=attempts-P;
-  const wasted=flips-2*P;            // 2 retournements gaspillés par erreur
   const base=P*100;
-  const efficiency=Math.max(0,P*60 - wasted*10);
+  const malus=flips*FLIP_COST;
   const perfect = mismatches===0;
   const perfectBonus = perfect ? P*40 : 0;
-  const total=base+efficiency+perfectBonus;
-  return {P,mismatches,base,efficiency,perfect,perfectBonus,total};
+  const total=Math.max(0, base - malus + perfectBonus);
+  return {P,mismatches,base,malus,flips,perfect,perfectBonus,total};
 }
 
 function endLevel(){
@@ -422,7 +474,7 @@ function endLevel(){
 
   $('breakdown').innerHTML=`
     <div class="row"><span>Base (${r.P} paires)</span><span class="v">+${r.base}</span></div>
-    <div class="row ${r.efficiency>0?'good':''}"><span>Bonus d’efficacité</span><span class="v">+${r.efficiency}</span></div>
+    <div class="row malus"><span>Malus — ${r.flips} cartes ouvertes (×${FLIP_COST})</span><span class="v">−${r.malus}</span></div>
     <div class="row ${r.perfect?'good':''}"><span>Bonus mémoire parfaite</span><span class="v">+${r.perfectBonus}</span></div>
     <div class="row total"><span>Score du niveau</span><span class="v">+${r.total}</span></div>`;
 
